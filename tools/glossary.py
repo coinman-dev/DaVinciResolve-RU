@@ -13,8 +13,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def main():
-    with open(os.path.join(ROOT, 'work', 'ru_existing.json'), encoding='utf-8') as f:
-        existing = json.load(f)
+    existing = []
+    for name in ('ru_existing.json', 'fusion_ru_existing.json'):
+        path = os.path.join(ROOT, 'work', name)
+        if os.path.exists(path):
+            with open(path, encoding='utf-8') as f:
+                existing += json.load(f)
 
     counts = collections.defaultdict(collections.Counter)
     for m in existing:

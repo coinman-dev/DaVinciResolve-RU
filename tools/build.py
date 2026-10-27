@@ -55,8 +55,11 @@ def main():
     missing = load_json('work/missing.json', None)
     if missing is None:
         sys.exit('run tools/extract.py first')
+    # The Fusion page strings, tools/extract_fusion.py.
+    missing = missing + load_json('work/fusion_missing.json', [])
     info = load_json('work/extract_info.json', {})
-    tm = translation_memory(load_json('work/ru_existing.json', []))
+    tm = translation_memory(load_json('work/ru_existing.json', []) +
+                            load_json('work/fusion_ru_existing.json', []))
     ru = {} if tm_only else load_json('translations/ru.json', {})
     overrides = {} if tm_only else load_json('translations/overrides.json', {})
 

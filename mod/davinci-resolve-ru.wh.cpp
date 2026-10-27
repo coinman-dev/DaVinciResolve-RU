@@ -2,7 +2,7 @@
 // @id              davinci-resolve-ru
 // @name            DaVinci Resolve: Russian translation completion
 // @description     Adds the missing Russian translations to the DaVinci Resolve interface
-// @version         0.1.0
+// @version         0.2.0
 // @author          coinman-dev
 // @github          https://github.com/coinman-dev
 // @homepage        https://github.com/coinman-dev/DaVinciResolve-RU
@@ -37,6 +37,11 @@ settings.
   $name: Translation file
   $description: >-
     Path to resolve_ru_extra.qm. Environment variables are expanded.
+- logUntranslated: false
+  $name: Log untranslated strings
+  $description: >-
+    Write the strings Resolve shows untranslated to the mod log, once each, for
+    completing the translation. Enable mod logging to see them.
 */
 // ==/WindhawkModSettings==
 
@@ -44,7 +49,9 @@ settings.
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 // Qt 5 types, only used through pointers and the exported functions of
@@ -80,12 +87,18 @@ using QCoreApplication_installTranslator_t =
     bool(__cdecl*)(QTranslator* translationFile);
 using QCoreApplication_removeTranslator_t =
     bool(__cdecl*)(QTranslator* translationFile);
+using QCoreApplication_translate_t = QString*(__cdecl*)(QString* result,
+                                                        const char* context,
+                                                        const char* sourceText,
+                                                        const char* disambiguation,
+                                                        int n);
 
 QTranslator_ctor_t QTranslator_ctor;
 QTranslator_loadData_t QTranslator_loadData;
 QTranslator_translate_t QTranslator_translate;
 QCoreApplication_installTranslator_t QCoreApplication_installTranslator_Original;
 QCoreApplication_removeTranslator_t QCoreApplication_removeTranslator;
+QCoreApplication_translate_t QCoreApplication_translate_Original;
 const QArrayData* g_sharedNull;
 
 // Strings translated by the Russian translation of Resolve, to tell it apart
@@ -225,6 +238,60 @@ bool __cdecl QCoreApplication_installTranslator_Hook(
     return ret;
 }
 
+// The result is the source text when no translator has the string.
+bool IsSourceText(const QString& result, const char* sourceText) {
+    const QArrayData* d = result.d;
+    size_t length = strlen(sourceText);
+    if (!d || static_cast<size_t>(d->size) != length) {
+        return false;
+    }
+
+    auto chars = reinterpret_cast<const char16_t*>(
+        reinterpret_cast<const char*>(d) + d->offset);
+    for (size_t i = 0; i < length; i++) {
+        if (chars[i] != static_cast<unsigned char>(sourceText[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+std::mutex g_untranslatedMutex;
+std::unordered_set<std::string> g_untranslated;
+
+QString* __cdecl QCoreApplication_translate_Hook(QString* result,
+                                                 const char* context,
+                                                 const char* sourceText,
+                                                 const char* disambiguation,
+                                                 int n) {
+    QCoreApplication_translate_Original(result, context, sourceText,
+                                        disambiguation, n);
+
+    // Only strings with letters, and only while a Russian translator is in
+    // use, which is when the additional one is installed.
+    if (g_translator && context && sourceText &&
+        IsSourceText(*result, sourceText)) {
+        bool hasLetters = false;
+        for (const char* p = sourceText; *p; p++) {
+            if ((*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z')) {
+                hasLetters = true;
+                break;
+            }
+        }
+
+        if (hasLetters) {
+            std::string key = std::string(context) + '\x04' + sourceText;
+            std::lock_guard<std::mutex> lock(g_untranslatedMutex);
+            if (g_untranslated.insert(key).second) {
+                Wh_Log(L"Untranslated: %S | %S", context, sourceText);
+            }
+        }
+    }
+
+    return result;
+}
+
 BOOL Wh_ModInit() {
     Wh_Log(L">");
 
@@ -276,6 +343,18 @@ BOOL Wh_ModInit() {
     WindhawkUtils::SetFunctionHook(installTranslator,
                                    QCoreApplication_installTranslator_Hook,
                                    &QCoreApplication_installTranslator_Original);
+
+    if (Wh_GetIntSetting(L"logUntranslated")) {
+        auto translate = reinterpret_cast<QCoreApplication_translate_t>(
+            GetProcAddress(
+                qtCore,
+                "?translate@QCoreApplication@@SA?AVQString@@PEBD00H@Z"));
+        if (translate) {
+            WindhawkUtils::SetFunctionHook(translate,
+                                           QCoreApplication_translate_Hook,
+                                           &QCoreApplication_translate_Original);
+        }
+    }
 
     return TRUE;
 }

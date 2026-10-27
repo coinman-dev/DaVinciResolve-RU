@@ -32,8 +32,8 @@ def main():
     if '--size' in sys.argv:
         size = int(sys.argv[sys.argv.index('--size') + 1])
 
-    missing = load('work/missing.json')
-    existing = load('work/ru_existing.json')
+    missing = load('work/missing.json') + load('work/fusion_missing.json', [])
+    existing = load('work/ru_existing.json') + load('work/fusion_ru_existing.json', [])
     ru = load('translations/ru.json', {})
     tm = {m['src'] for m in existing if m['tr'] and all(m['tr'])}
 

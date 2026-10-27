@@ -1,12 +1,16 @@
 # Installs the mod from mod\davinci-resolve-ru.wh.cpp into Windhawk as a local
 # mod, with logging, for testing (asks for admin rights). Needs the Windhawk
-# developer tools.
+# developer tools. -LogUntranslated turns on logging of the strings Resolve
+# shows untranslated (capture them with tools\dbwin.ps1).
+param([switch]$LogUntranslated)
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 
 $principal = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Start-Process pwsh -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$PSCommandPath`""
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -NoExit -File `"$PSCommandPath`""
+    if ($LogUntranslated) { $arguments += ' -LogUntranslated' }
+    Start-Process pwsh -Verb RunAs -ArgumentList $arguments
     return
 }
 
@@ -21,5 +25,6 @@ if ($ini -match '^CompilerPath=$') {
 
 & $cli mod install --file (Resolve-Path $src)
 & $cli mod config set local@davinci-resolve-ru loggingEnabled true
+& $cli mod settings set local@davinci-resolve-ru "logUntranslated=$([int][bool]$LogUntranslated)"
 
 Write-Host 'Done. Restart DaVinci Resolve.'
