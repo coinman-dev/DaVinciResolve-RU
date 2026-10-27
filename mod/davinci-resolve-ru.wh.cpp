@@ -10,7 +10,7 @@
 // @architecture    x86-64
 // ==/WindhawkMod==
 
-// Source code is published under The GNU General Public License v3.0.
+// Source code is published under the MIT License.
 
 // ==WindhawkModReadme==
 /*

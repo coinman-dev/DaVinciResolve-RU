@@ -1,0 +1,43 @@
+; Exports of the system dxva2.dll, forwarded to it. Generated from
+; C:\Windows\System32\dxva2.dll (Windows 11 24H2).
+LIBRARY dxva2.dll
+EXPORTS
+    GetPhysicalMonitorFromTarget = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetPhysicalMonitorFromTarget" @1
+    CapabilitiesRequestAndCapabilitiesReply = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.CapabilitiesRequestAndCapabilitiesReply" @2
+    DXVA2CreateDirect3DDeviceManager9 = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.DXVA2CreateDirect3DDeviceManager9" @3
+    DXVA2CreateVideoService = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.DXVA2CreateVideoService" @4
+    DXVAHD_CreateDevice = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.DXVAHD_CreateDevice" @5
+    DegaussMonitor = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.DegaussMonitor" @6
+    DestroyPhysicalMonitor = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.DestroyPhysicalMonitor" @7
+    DestroyPhysicalMonitors = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.DestroyPhysicalMonitors" @8
+    GetCapabilitiesStringLength = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetCapabilitiesStringLength" @9
+    GetMonitorBrightness = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorBrightness" @10
+    GetMonitorCapabilities = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorCapabilities" @11
+    GetMonitorColorTemperature = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorColorTemperature" @12
+    GetMonitorContrast = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorContrast" @13
+    GetMonitorDisplayAreaPosition = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorDisplayAreaPosition" @14
+    GetMonitorDisplayAreaSize = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorDisplayAreaSize" @15
+    GetMonitorRedGreenOrBlueDrive = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorRedGreenOrBlueDrive" @16
+    GetMonitorRedGreenOrBlueGain = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorRedGreenOrBlueGain" @17
+    GetMonitorTechnologyType = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetMonitorTechnologyType" @18
+    GetNumberOfPhysicalMonitorsFromHMONITOR = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetNumberOfPhysicalMonitorsFromHMONITOR" @19
+    GetNumberOfPhysicalMonitorsFromIDirect3DDevice9 = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetNumberOfPhysicalMonitorsFromIDirect3DDevice9" @20
+    GetPhysicalMonitorsFromHMONITOR = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetPhysicalMonitorsFromHMONITOR" @21
+    GetPhysicalMonitorsFromIDirect3DDevice9 = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetPhysicalMonitorsFromIDirect3DDevice9" @22
+    GetTimingReport = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetTimingReport" @23
+    GetVCPFeatureAndVCPFeatureReply = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.GetVCPFeatureAndVCPFeatureReply" @24
+    OPMGetVideoOutputForTarget = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.OPMGetVideoOutputForTarget" @25
+    OPMGetVideoOutputsFromHMONITOR = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.OPMGetVideoOutputsFromHMONITOR" @26
+    OPMGetVideoOutputsFromIDirect3DDevice9Object = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.OPMGetVideoOutputsFromIDirect3DDevice9Object" @27
+    RestoreMonitorFactoryColorDefaults = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.RestoreMonitorFactoryColorDefaults" @28
+    RestoreMonitorFactoryDefaults = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.RestoreMonitorFactoryDefaults" @29
+    SaveCurrentMonitorSettings = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SaveCurrentMonitorSettings" @30
+    SaveCurrentSettings = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SaveCurrentSettings" @31
+    SetMonitorBrightness = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorBrightness" @32
+    SetMonitorColorTemperature = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorColorTemperature" @33
+    SetMonitorContrast = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorContrast" @34
+    SetMonitorDisplayAreaPosition = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorDisplayAreaPosition" @35
+    SetMonitorDisplayAreaSize = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorDisplayAreaSize" @36
+    SetMonitorRedGreenOrBlueDrive = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorRedGreenOrBlueDrive" @37
+    SetMonitorRedGreenOrBlueGain = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetMonitorRedGreenOrBlueGain" @38
+    SetVCPFeature = "\\.\GLOBALROOT\SystemRoot\System32\dxva2.SetVCPFeature" @39

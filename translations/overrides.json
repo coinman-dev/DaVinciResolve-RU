@@ -155,6 +155,7 @@
  "PanoMapPluginFactory\u0004VStrip": "В. полоса",
  "QFrame\u0004Audio Track %1": "Аудиодорожка %1",
  "QObject\u0004AI Assistants Configured": "AI-ассистенты настроены",
+ "QObject\u0004Mixer": "Микшер",
  "QObject\u0004The DaVinci Resolve MCP server has been added to these AI assistants. Please restart them for changes to take effect.": "MCP-сервер DaVinci Resolve добавлен в эти AI-ассистенты. Чтобы изменения вступили в силу, перезапустите их.",
  "QPushButton\u0004Close": "Закрыть",
  "QWidget\u0004Centered": "По центру",

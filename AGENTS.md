@@ -22,6 +22,15 @@
   `%ProgramData%\DaVinciResolve-RU\resolve_ru_extra.qm` и ставит его перед
   русским — он ищется первым. Поэтому через него можно и переопределять
   официальные строки (`translations/overrides.json`).
+- Для пользователей то же делает загрузчик без Windhawk — `loader/dxva2.c`,
+  собирается в `dxva2.dll` и кладётся рядом с `Resolve.exe` вместе с
+  `resolve_ru_extra.qm`. `Resolve.exe` импортирует `dxva2.dll` и находит её
+  первой в своей папке; все экспорты переадресованы системной
+  (`loader/dxva2.def`, путь `\\.\GLOBALROOT\SystemRoot\System32\dxva2`).
+  Загрузчик подменяет `installTranslator` в таблице экспорта `Qt5Core.dll`
+  (через переходник в пределах 2 ГБ от модуля) и в уже разрешённых таблицах
+  импорта. Ставит и удаляет его `Install-ResolveRU.ps1`. Лог — тот же
+  `dbwin.ps1 -Filter davinci-resolve-ru`. Мод и загрузчик вместе не включать.
 - Настройка мода `logUntranslated` перехватывает
   `QCoreApplication::translate` и пишет в лог Windhawk каждую строку,
   показанную без перевода (`Untranslated: <контекст> | <строка>`).
@@ -41,6 +50,8 @@
 | Строки из лога | `tools/runtime_batch.py work/untranslated.log` | `work/batches/rNNN.json` (ключ «контекст\u0004строка») |
 | Слияние | `tools/assemble.py` | `translations/ru.json`, `translations/overrides.json` |
 | Сборка | `tools/build.py` | `dist/resolve_ru_extra.qm` |
+| Загрузчик | `tools/build_loader.py` | `dist/dxva2.dll` |
+| Релиз | `tools/package.py vX.Y.Z` | `dist/release/` (ASCII-копия установщика, `SHA256SUMS.txt`) |
 
 Установка для проверки: скопировать `dist/resolve_ru_extra.qm` в
 `C:\ProgramData\DaVinciResolve-RU\`, мод — `tools/dev-install.ps1`
@@ -48,6 +59,13 @@
 администратора; нужны инструменты разработчика Windhawk). Лог мода —
 `tools/dbwin.ps1 -Seconds N -Filter davinci-resolve-ru -OutFile <файл>`.
 Перевод загружается только при запуске Resolve.
+
+Установка загрузчика для проверки:
+`Install-ResolveRU.ps1 -Action Install -Source dist -Yes` (Resolve закрыт).
+`Install-ResolveRU.ps1` хранится в UTF-8 с BOM; в релиз идёт ASCII-копия
+(`tools/ConvertTo-AsciiScript.ps1`), иначе `irm | iex` в Windows PowerShell
+5.1 ломает кириллицу. Строки вне ASCII в скрипте — только в кавычках и
+комментариях, не в `$(...)` внутри строк.
 
 Проверка компиляции мода без установки:
 `"C:/Program Files/Windhawk/Compiler/bin/clang++.exe" @"C:/Program Files/Windhawk/Compiler/compile_flags.txt" -I"C:/Program Files/Windhawk/Compiler/include" -fsyntax-only -Wall mod/davinci-resolve-ru.wh.cpp`
