@@ -84,6 +84,16 @@ def main():
             'tr': forms(tr, m.get('plural', False)),
         })
 
+    # Overrides of strings Resolve does translate, e.g. shorter ones for
+    # cramped layouts. The additional translator is searched first.
+    missing_keys = {m['ctx'] + '\u0004' + m['src'] for m in missing}
+    for key, tr in overrides.items():
+        if key in missing_keys:
+            continue
+        ctx, src = key.split('\u0004', 1)
+        stats['override'] += 1
+        messages.append({'ctx': ctx, 'src': src, 'cmt': '', 'tr': forms(tr, False)})
+
     rules = bytes.fromhex(info.get('ru_numerus_rules', ''))
     qm = qmlib.write_qm(messages, 'ru_RU', rules)
     os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)

@@ -1,6 +1,7 @@
 # Captures OutputDebugString output (Windhawk mod logs) for some seconds.
-# Usage: tools\dbwin.ps1 [-Seconds 60] [-Filter davinci-resolve-ru]
-param([int]$Seconds = 60, [string]$Filter = '')
+# Usage: tools\dbwin.ps1 [-Seconds 60] [-Filter davinci-resolve-ru] [-OutFile path]
+# With -OutFile, lines are appended to the file as they arrive.
+param([int]$Seconds = 60, [string]$Filter = '', [string]$OutFile = '')
 
 Add-Type -TypeDefinition @'
 using System;
@@ -37,14 +38,18 @@ public static class DbWin {
         if (view == IntPtr.Zero) throw new Exception("MapViewOfFile " + Marshal.GetLastWin32Error());
     }
 
-    public static List<string> Capture(int ms, string filter) {
+    public static List<string> Capture(int ms, string filter, string outFile) {
         var lines = new List<string>();
         var end = DateTime.Now.AddMilliseconds(ms);
         SetEvent(ready);
         while (DateTime.Now < end) {
             if (WaitForSingleObject(data, 200) == 0) {
                 string line = Marshal.PtrToStringAnsi(view + 4);
-                if (filter.Length == 0 || line.Contains(filter)) lines.Add(line.TrimEnd());
+                if (filter.Length == 0 || line.Contains(filter)) {
+                    line = line.TrimEnd();
+                    if (outFile.Length > 0) System.IO.File.AppendAllText(outFile, line + "\n");
+                    else lines.Add(line);
+                }
                 SetEvent(ready);
             }
         }
@@ -54,4 +59,4 @@ public static class DbWin {
 '@
 
 [DbWin]::Init()
-[DbWin]::Capture($Seconds * 1000, $Filter)
+[DbWin]::Capture($Seconds * 1000, $Filter, $OutFile)

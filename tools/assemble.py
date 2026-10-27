@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def main():
     outs = sorted(glob.glob(os.path.join(ROOT, 'work', 'out', 'b*.json')))
-    check = subprocess.run([sys.executable, '-I', os.path.join(ROOT, 'tools', 'check.py'), *outs])
+    check = subprocess.run([sys.executable, '-I', os.path.join(ROOT, 'tools', 'check.py'), '--all'])
     if check.returncode:
         sys.exit('fix the batch errors first')
 
@@ -34,6 +34,22 @@ def main():
             for src, tr in json.load(f).items():
                 added += src not in ru
                 ru[src] = tr
+
+    # Logged strings no language file has, keyed by context + source text.
+    overrides_path = os.path.join(ROOT, 'translations', 'overrides.json')
+    overrides = {}
+    if os.path.exists(overrides_path):
+        with open(overrides_path, encoding='utf-8') as f:
+            overrides = json.load(f)
+    for out in sorted(glob.glob(os.path.join(ROOT, 'work', 'out', 'r*.json'))):
+        with open(out, encoding='utf-8') as f:
+            for key, tr in json.load(f).items():
+                src = key.split('\u0004', 1)[1]
+                if tr != src:
+                    overrides[key] = tr
+    with open(overrides_path, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(dict(sorted(overrides.items())), f, ensure_ascii=False, indent=1)
+        f.write('\n')
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='utf-8', newline='\n') as f:

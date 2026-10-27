@@ -71,21 +71,23 @@ def check_file(out_path):
     batch = json.load(open(os.path.join(ROOT, 'work', 'batches', name), encoding='utf-8'))
     out = json.load(open(out_path, encoding='utf-8'))
     errors, notes = [], []
+    # Batches of logged strings (rNNN) are keyed by context + source text.
     for item in batch:
         src = item['src']
-        if src not in out:
-            errors.append(f'missing: {src!r}')
+        key = item.get('key', src)
+        if key not in out:
+            errors.append(f'missing: {key!r}')
             continue
-        for p in check_one(src, out[src], item.get('plural', False)):
+        for p in check_one(src, out[key], item.get('plural', False)):
             (notes if p.startswith('note:') else errors).append(f'{src!r}: {p}')
-    extra = set(out) - {i['src'] for i in batch}
+    extra = set(out) - {i.get('key', i['src']) for i in batch}
     for src in extra:
         errors.append(f'not in the batch: {src!r}')
     return errors, notes
 
 
 def main():
-    paths = sorted(glob.glob(os.path.join(ROOT, 'work', 'out', 'b*.json'))) \
+    paths = sorted(glob.glob(os.path.join(ROOT, 'work', 'out', '[br]*.json'))) \
         if '--all' in sys.argv else sys.argv[1:]
     failed = False
     for path in paths:
